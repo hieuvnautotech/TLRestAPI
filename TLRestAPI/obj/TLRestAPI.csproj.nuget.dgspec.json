@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "E:\\HieuSW\\netcore\\TLRestAPI\\TLRestAPI\\TLRestAPI.csproj": {}
+    "D:\\src-API-RestTL\\TLRestAPI\\TLRestAPI\\TLRestAPI.csproj": {}
   },
   "projects": {
-    "E:\\HieuSW\\netcore\\TLRestAPI\\TLRestAPI\\TLRestAPI.csproj": {
+    "D:\\src-API-RestTL\\TLRestAPI\\TLRestAPI\\TLRestAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\HieuSW\\netcore\\TLRestAPI\\TLRestAPI\\TLRestAPI.csproj",
+        "projectUniqueName": "D:\\src-API-RestTL\\TLRestAPI\\TLRestAPI\\TLRestAPI.csproj",
         "projectName": "TLRestAPI",
-        "projectPath": "E:\\HieuSW\\netcore\\TLRestAPI\\TLRestAPI\\TLRestAPI.csproj",
-        "packagesPath": "C:\\Users\\hieuv\\.nuget\\packages\\",
-        "outputPath": "E:\\HieuSW\\netcore\\TLRestAPI\\TLRestAPI\\obj\\",
+        "projectPath": "D:\\src-API-RestTL\\TLRestAPI\\TLRestAPI\\TLRestAPI.csproj",
+        "packagesPath": "C:\\Users\\Welcome\\.nuget\\packages\\",
+        "outputPath": "D:\\src-API-RestTL\\TLRestAPI\\TLRestAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\hieuv\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Welcome\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -67,7 +67,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.301\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.302\\RuntimeIdentifierGraph.json"
         }
       }
     }

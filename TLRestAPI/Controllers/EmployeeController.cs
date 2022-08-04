@@ -1,26 +1,32 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Data;
 using System.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
+using System.IO;
 using TLRestAPI.Models;
 
 namespace TLRestAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DepartmentController : ControllerBase
+    public class EmployeeController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public DepartmentController(IConfiguration configuration)
+        private readonly IWebHostEnvironment _env;
+        public EmployeeController(IConfiguration configuration,IWebHostEnvironment env)
         {
             _configuration = configuration;
+            _env = env;
         }
         [HttpGet]
-        public JsonResult Get() {
+        public JsonResult Get()
+        {
             string query = @"
-                                select DepartmentId, DepartmentName from
-                                   dbo.Department
+                                select EmployeeId, EmployeeName, Department, convert(varchar(10), DateOfJoining,120) as DateOfJoining, PhotoFileName from
+                                   dbo.Employee
                             ";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
@@ -41,11 +47,12 @@ namespace TLRestAPI.Controllers
         }
 
         [HttpPost]
-        public JsonResult Post(Department dep)
+        public JsonResult Post(Employee emp)
         {
             string query = @"
-                                insert into dbo.Department
-                                values (@DepartmentName)
+                                insert into dbo.Employee
+                                (EmployeeName, Department, DateOfJoining, PhotoFileName)
+                                values (@EmployeeName, @Department, @DateOfJoining, @PhotoFileName)
                             ";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
@@ -55,7 +62,10 @@ namespace TLRestAPI.Controllers
                 myCon.Open();
                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    myCommand.Parameters.AddWithValue("@DepartmentName", dep.DepartmentName);
+                    myCommand.Parameters.AddWithValue("@EmployeeName", emp.EmployeeName);
+                    myCommand.Parameters.AddWithValue("@Department", emp.Department);
+                    myCommand.Parameters.AddWithValue("@DateOfJoining", emp.DateOfJoining);
+                    myCommand.Parameters.AddWithValue("@PhotoFileName", emp.PhotoFileName);
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
                     myReader.Close();
@@ -67,12 +77,15 @@ namespace TLRestAPI.Controllers
         }
 
         [HttpPut]
-        public JsonResult Put(Department dep)
+        public JsonResult Put(Employee emp)
         {
             string query = @"
-                                update dbo.Department
-                                set DepartmentName =  @DepartmentName
-                                where DepartmentId = @DepartmentId
+                                update dbo.Employee
+                                set EmployeeName =  @EmployeeName,
+                                Department =  @Department,
+                                DateOfJoining =  @DateOfJoining,
+                                PhotoFileName =  @PhotoFileName                          
+                                where EmployeeId = @EmployeeId
                             ";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
@@ -82,8 +95,11 @@ namespace TLRestAPI.Controllers
                 myCon.Open();
                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    myCommand.Parameters.AddWithValue("@DepartmentId", dep.DepartmentId);
-                    myCommand.Parameters.AddWithValue("@DepartmentName", dep.DepartmentName);
+                    myCommand.Parameters.AddWithValue("@EmployeeId", emp.EmployeeId);
+                    myCommand.Parameters.AddWithValue("@EmployeeName", emp.EmployeeName);
+                    myCommand.Parameters.AddWithValue("@Department", emp.Department);
+                    myCommand.Parameters.AddWithValue("@DateOfJoining", emp.DateOfJoining);
+                    myCommand.Parameters.AddWithValue("@PhotoFileName", emp.PhotoFileName);
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
                     myReader.Close();
@@ -98,8 +114,8 @@ namespace TLRestAPI.Controllers
         public JsonResult Delete(int id)
         {
             string query = @"
-                                delete from dbo.Department
-                                where DepartmentId = @DepartmentId
+                                delete from dbo.Employee
+                                where EmployeeId = @EmployeeId
                             ";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
@@ -109,7 +125,7 @@ namespace TLRestAPI.Controllers
                 myCon.Open();
                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    myCommand.Parameters.AddWithValue("@DepartmentId", id);
+                    myCommand.Parameters.AddWithValue("@EmployeeId", id);
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
                     myReader.Close();
@@ -118,6 +134,30 @@ namespace TLRestAPI.Controllers
             }
 
             return new JsonResult("Deleted successfully");
+        }
+
+
+        [Route("SaveFile")]
+        [HttpPost]
+        public JsonResult SaveFile()
+        {
+            try {
+                var httpRequest = Request.Form;
+                var postedFile = httpRequest.Files[0];
+                string filename = postedFile.FileName;
+                var physicalpath = _env.ContentRootPath + "/Photos/" + filename;
+
+                using (var stream = new FileStream(physicalpath, FileMode.Create))
+                {
+                    postedFile.CopyTo(stream);
+                }
+                return new JsonResult(filename);
+            }
+            catch(Exception) 
+            {
+                return new JsonResult("anonymous.png");
+                
+            }
         }
     }
 }
